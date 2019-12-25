@@ -16,7 +16,7 @@
 
 #include "iceoryx_posh/capro/service_description.hpp"
 #include "iceoryx_posh/internal/popo/receiver_port.hpp"
-#include "iceoryx_posh/mepoo/chunk_info.hpp"
+#include "iceoryx_posh/mepoo/chunk_header.hpp"
 #include "iceoryx_utils/fixed_string/string100.hpp"
 #include "iceoryx_utils/posix_wrapper/semaphore.hpp"
 
@@ -42,7 +42,7 @@ class Subscriber
     using mutex_t = std::mutex;
     using ReceiveHandler_t = std::function<void(void)>;
 
-    /// @brief Constructor 
+    /// @brief Constructor
     /// @param[in] service Information on service , service, instance, event Id
     /// @param[in] runnableName optional name of the runnable the subscriber belongs to
     explicit Subscriber(const capro::ServiceDescription& service, const cxx::CString100& runnableName = "") noexcept;
@@ -89,9 +89,9 @@ class Subscriber
     bool tryWaitForChunk() noexcept;
 
     /// @brief Get Function for chunk
-    /// @param[in,out] chunkInfo Information of the chunk received.
+    /// @param[in,out] chunkHeader Information of the chunk received.
     /// @return true when the chunk is received otherwise false
-    bool getChunkWithInfo(const mepoo::ChunkInfo** chunkInfo) noexcept;
+    bool getChunk(const mepoo::ChunkHeader** chunkHeader) noexcept;
 
     /// @brief Get Function for chunk
     /// @param[in,out] payload pointer to the chunk payload.
@@ -102,9 +102,9 @@ class Subscriber
     void deleteNewChunks() noexcept;
 
     /// @brief Function for releasing particular chunk
-    /// @param[in] chunkInfo Information of the chunk to be released.
+    /// @param[in] chunkHeader Information of the chunk to be released.
     /// @return true when the chunk is deleted , false when pointer is invalid
-    bool releaseChunkWithInfo(const mepoo::ChunkInfo* const chunkInfo) noexcept;
+    bool releaseChunk(const mepoo::ChunkHeader* const chunkHeader) noexcept;
 
     /// @brief Function for releasing particular chunk
     /// @param[in] payload pointer to the payload of the chunk to be released.

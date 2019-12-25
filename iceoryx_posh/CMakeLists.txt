@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-set(iceoryx_posh_VERSION 0.15.0)
+set(iceoryx_posh_VERSION 0.16.0)
 project(iceoryx_posh VERSION ${iceoryx_posh_VERSION})
 
 find_package(Threads REQUIRED)
@@ -25,8 +25,8 @@ endif( clang-tidy )
 ########## set variables for library export ##########
 #
 setup_package_name_and_create_files(
-    NAME ${PROJECT_NAME} 
-    NAMESPACE iceoryx_posh 
+    NAME ${PROJECT_NAME}
+    NAMESPACE iceoryx_posh
     PROJECT_PREFIX ${PREFIX}
 )
 
@@ -46,7 +46,7 @@ add_library(iceoryx_posh
     source/log/posh_logging.cpp
     source/capro/capro_message.cpp
     source/capro/service_description.cpp
-    source/mepoo/chunk_info.cpp
+    source/mepoo/chunk_header.cpp
     source/mepoo/mepoo_config.cpp
     source/mepoo/segment_config.cpp
     source/mepoo/memory_manager.cpp
@@ -182,7 +182,7 @@ if(PERFORM_CLANG_TIDY)
     )
 endif(PERFORM_CLANG_TIDY)
 target_link_libraries(RouDi
-    PRIVATE 
+    PRIVATE
     ${PROJECT_NAMESPACE}::iceoryx_posh_roudi
 )
 
@@ -214,7 +214,7 @@ endif(roudi_environment)
 ########## exporting library ##########
 #
 setup_install_directories_and_export_package(
-    TARGETS iceoryx_posh iceoryx_posh_roudi RouDi 
+    TARGETS iceoryx_posh iceoryx_posh_roudi RouDi
     INCLUDE_DIRECTORY include/
 )
 

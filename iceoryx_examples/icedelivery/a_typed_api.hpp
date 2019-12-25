@@ -17,6 +17,8 @@
 #include "iceoryx_posh/popo/publisher.hpp"
 #include "iceoryx_posh/popo/subscriber.hpp"
 
+#include "topic_data.hpp"
+
 #include <functional>
 #include <memory>
 
@@ -29,7 +31,7 @@ using SamplePtr = std::unique_ptr<TopicType, SampleDeleter<TopicType>>;
 /// @brief A typed publisher that takes the topic type as template argument
 /// A RAII pattern is used with offering the the publisher in c'tor and stop offering in d'tor
 /// This class has the limitation that the topic type is a fixed size data structure.
-/// I.e. we can get the size of memory to allcoate with the sizeof() operation. 
+/// I.e. we can get the size of memory to allocate with the sizeof() operation.
 /// So the topic type is not allowed to use heap-based members like a std::vector with default allocator
 /// allocate() returns a unique_ptr to a sample. This must be moved to the publish call for sending
 /// If the unique_ptr goes out of scope without publishing, the provided custom deleter frees the memory chunk
@@ -59,12 +61,12 @@ class TypedPublisher
             sample = new (sample) TopicType;
 
             // return a unique_ptr which holds the sample
-            return SamplePtr<TopicType>(sample, [this](TopicType* chunk){ this->m_publisher.freeChunk(chunk);});
+            return SamplePtr<TopicType>(sample, [this](TopicType* chunk) { this->m_publisher.freeChunk(chunk); });
         }
         else
         {
             // no more memory in the middleware :-(
-            return SamplePtr<TopicType>(nullptr, [this](TopicType* chunk){ this->m_publisher.freeChunk(chunk);});
+            return SamplePtr<TopicType>(nullptr, [this](TopicType* chunk) { this->m_publisher.freeChunk(chunk); });
         }
     }
 
@@ -115,14 +117,15 @@ class TypedSubscriber
   private:
     void receiveHandler()
     {
-        const void * chunk = nullptr;
+        const void* chunk = nullptr;
 
-        // get all the chunks the FiFo holds. Maybe there are several ones if the publisher produces faster than the subscriber can process
+        // get all the chunks the FiFo holds. Maybe there are several ones if the publisher produces faster than the
+        // subscriber can process
         while (m_subscriber.getChunk(&chunk))
         {
-            auto sample = static_cast<const CounterTopic*>(chunk);
-            
-            // call the provided callback 
+            auto sample = static_cast<const TopicType*>(chunk);
+
+            // call the provided callback
             m_callback(*sample);
 
             // release the chunk
